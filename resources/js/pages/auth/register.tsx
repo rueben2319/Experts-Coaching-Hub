@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
@@ -7,6 +7,7 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AuthLayout from '@/layouts/auth-layout';
 
 type RegisterForm = {
@@ -14,14 +15,25 @@ type RegisterForm = {
     email: string;
     password: string;
     password_confirmation: string;
+    role_id: string;
+};
+
+type PageProps = {
+    roles: Array<{
+        id: string;
+        name: string;
+        display_name: string;
+    }>;
 };
 
 export default function Register() {
+    const { roles } = usePage<PageProps>().props;
     const { data, setData, post, processing, errors, reset } = useForm<Required<RegisterForm>>({
         name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        role_id: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -67,6 +79,28 @@ export default function Register() {
                             placeholder="email@example.com"
                         />
                         <InputError message={errors.email} />
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="role_id">I want to join as</Label>
+                        <Select
+                            value={data.role_id}
+                            onValueChange={(value) => setData('role_id', value)}
+                            required
+                            disabled={processing}
+                        >
+                            <SelectTrigger className="w-full" id="role_id">
+                                <SelectValue placeholder="Select your role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {roles.map((role) => (
+                                    <SelectItem key={role.id} value={role.id}>
+                                        {role.display_name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        <InputError message={errors.role_id} />
                     </div>
 
                     <div className="grid gap-2">
