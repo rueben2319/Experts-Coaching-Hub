@@ -1,6 +1,6 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "experts-coaching-hub",
+    "name": "experts/coaching-hub",
     "type": "project",
     "description": "Experts Coaching Hub - Elevate your coaching, build impact",
     "keywords": [
@@ -14,6 +14,7 @@
         "php": "^8.2",
         "inertiajs/inertia-laravel": "^2.0",
         "laravel/framework": "^12.0",
+        "laravel/socialite": "*",
         "laravel/tinker": "^2.10.1",
         "tightenco/ziggy": "^2.4"
     },
