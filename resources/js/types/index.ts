@@ -67,4 +67,11 @@ export interface SharedData {
     flash: {
         message: string | null;
     };
+}
+
+export interface NavItem {
+    title: string;
+    href?: string;
+    icon?: React.ComponentType<{ className?: string }>;
+    children?: NavItem[];
 } 
