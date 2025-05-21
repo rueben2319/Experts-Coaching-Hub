@@ -9,22 +9,43 @@ use Inertia\Inertia;
 
 class PackageController extends Controller
 {
+    public function __construct()
+    {
+        // Ensure all methods require authentication
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $packages = Package::with('modules')->paginate(10);
-        
-        return Inertia::render('Package/Index', [
-            'packages' => $packages,
-        ]);
+        try {
+            $packages = Package::with(['coach', 'modules'])->paginate(10);
+            
+            return Inertia::render('coach/packages/Index', [
+                'packages' => $packages,
+                'user' => auth()->user(),
+            ]);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error loading packages: ' . $e->getMessage());
+        }
     }
 
     public function create()
     {
-        return Inertia::render('Package/Create');
+        // Ensure user is a coach
+        if (!auth()->user()->isCoach()) {
+            return redirect()->route('packages.index')->with('error', 'Only coaches can create packages.');
+        }
+
+        return Inertia::render('coach/packages/Create');
     }
 
     public function store(Request $request)
     {
+        // Ensure user is a coach
+        if (!auth()->user()->isCoach()) {
+            return redirect()->route('packages.index')->with('error', 'Only coaches can create packages.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -37,29 +58,57 @@ class PackageController extends Controller
             'is_featured' => 'boolean',
         ]);
 
-        $package = Package::create($validated);
+        // Get the coach_id from the authenticated user's coach profile
+        $coach_id = $request->user()->coachProfile->id;
+        
+        // Create the package with the coach_id
+        $package = Package::create([
+            ...$validated,
+            'coach_id' => $coach_id,
+        ]);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function show(Package $package)
     {
-        $package->load('modules.contents');
+        $package->load(['coach', 'modules.contents']);
         
-        return Inertia::render('Package/Show', [
+        return Inertia::render('coach/packages/Show', [
             'package' => $package,
+            'user' => auth()->user(),
         ]);
     }
 
     public function edit(Package $package)
     {
-        return Inertia::render('Package/Edit', [
+        // Ensure user is a coach
+        if (!auth()->user()->isCoach()) {
+            return redirect()->route('packages.index')->with('error', 'Only coaches can edit packages.');
+        }
+
+        // Ensure the coach can only edit their own packages
+        if ($package->coach_id !== auth()->user()->coachProfile->id) {
+            return redirect()->route('packages.index')->with('error', 'You can only edit your own packages.');
+        }
+
+        return Inertia::render('coach/packages/Edit', [
             'package' => $package,
         ]);
     }
 
     public function update(Request $request, Package $package)
     {
+        // Ensure user is a coach
+        if (!auth()->user()->isCoach()) {
+            return redirect()->route('packages.index')->with('error', 'Only coaches can update packages.');
+        }
+
+        // Ensure the coach can only update their own packages
+        if ($package->coach_id !== auth()->user()->coachProfile->id) {
+            return redirect()->route('packages.index')->with('error', 'You can only update your own packages.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -74,13 +123,23 @@ class PackageController extends Controller
 
         $package->update($validated);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function destroy(Package $package)
     {
+        // Ensure user is a coach
+        if (!auth()->user()->isCoach()) {
+            return redirect()->route('packages.index')->with('error', 'Only coaches can delete packages.');
+        }
+
+        // Ensure the coach can only delete their own packages
+        if ($package->coach_id !== auth()->user()->coachProfile->id) {
+            return redirect()->route('packages.index')->with('error', 'You can only delete your own packages.');
+        }
+
         $package->delete();
 
-        return redirect()->route('packages.index');
+        return redirect()->route('coach.packages.index');
     }
 } 

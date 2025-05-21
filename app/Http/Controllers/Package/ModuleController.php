@@ -12,7 +12,7 @@ class ModuleController extends Controller
 {
     public function create(Package $package)
     {
-        return Inertia::render('Package/Module/Create', [
+        return Inertia::render('coach/packages/modules/Create', [
             'package' => $package,
         ]);
     }
@@ -22,18 +22,19 @@ class ModuleController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'order_index' => 'required|integer|min:0',
+            'order_index' => 'required|integer|min:1',
             'estimated_duration_days' => 'required|integer|min:1',
+            'is_published' => 'boolean',
         ]);
 
         $module = $package->modules()->create($validated);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function edit(Package $package, PackageModule $module)
     {
-        return Inertia::render('Package/Module/Edit', [
+        return Inertia::render('coach/packages/modules/Edit', [
             'package' => $package,
             'module' => $module,
         ]);
@@ -44,19 +45,20 @@ class ModuleController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'order_index' => 'required|integer|min:0',
+            'order_index' => 'required|integer|min:1',
             'estimated_duration_days' => 'required|integer|min:1',
+            'is_published' => 'boolean',
         ]);
 
         $module->update($validated);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function destroy(Package $package, PackageModule $module)
     {
         $module->delete();
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 } 

@@ -13,7 +13,7 @@ class ContentController extends Controller
 {
     public function create(Package $package, PackageModule $module)
     {
-        return Inertia::render('Package/Content/Create', [
+        return Inertia::render('coach/packages/modules/contents/Create', [
             'package' => $package,
             'module' => $module,
         ]);
@@ -33,12 +33,12 @@ class ContentController extends Controller
 
         $content = $module->contents()->create($validated);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function edit(Package $package, PackageModule $module, ModuleContent $content)
     {
-        return Inertia::render('Package/Content/Edit', [
+        return Inertia::render('coach/packages/modules/contents/Edit', [
             'package' => $package,
             'module' => $module,
             'content' => $content,
@@ -59,13 +59,13 @@ class ContentController extends Controller
 
         $content->update($validated);
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 
     public function destroy(Package $package, PackageModule $module, ModuleContent $content)
     {
         $content->delete();
 
-        return redirect()->route('packages.show', $package);
+        return redirect()->route('coach.packages.show', $package);
     }
 } 

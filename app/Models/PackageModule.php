@@ -32,11 +32,11 @@ class PackageModule extends Model
 
     public function contents(): HasMany
     {
-        return $this->hasMany(ModuleContent::class);
+        return $this->hasMany(ModuleContent::class, 'module_id');
     }
 
     public function clientProgress(): HasMany
     {
-        return $this->hasMany(ClientModuleProgress::class);
+        return $this->hasMany(ClientModuleProgress::class, 'module_id');
     }
 } 

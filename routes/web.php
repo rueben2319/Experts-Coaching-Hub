@@ -21,3 +21,4 @@ Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handlePro
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 require __DIR__.'/package.php';
+require __DIR__.'/coach.php';

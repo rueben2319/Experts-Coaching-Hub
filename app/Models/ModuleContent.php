@@ -12,6 +12,8 @@ class ModuleContent extends Model
 {
     use HasFactory, HasUuids;
 
+    protected $table = 'module_content';
+
     protected $fillable = [
         'module_id',
         'title',

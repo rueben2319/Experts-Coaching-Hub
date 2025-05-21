@@ -73,6 +73,38 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(UserRole::class, 'user_role_id');
     }
 
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+
+    /**
+     * Check if the user is a coach.
+     */
+    public function isCoach(): bool
+    {
+        return $this->hasRole('coach');
+    }
+
+    /**
+     * Check if the user is a client.
+     */
+    public function isClient(): bool
+    {
+        return $this->hasRole('client');
+    }
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole('admin');
+    }
+
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);

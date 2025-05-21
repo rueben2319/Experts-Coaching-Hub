@@ -13,6 +13,15 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Drop foreign keys referencing the users table
+        Schema::table('client_profiles', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+        Schema::table('coach_profiles', function (Blueprint $table) {
+            $table->dropForeign(['user_id']);
+        });
+        // Add more tables if needed
+
         // Create a new users table with UUID
         Schema::create('users_new', function (Blueprint $table) {
             $table->uuid('id')->primary();
@@ -50,6 +59,15 @@ return new class extends Migration
         // Drop old table and rename new table
         Schema::drop('users');
         Schema::rename('users_new', 'users');
+
+        // Re-add foreign keys
+        Schema::table('client_profiles', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+        Schema::table('coach_profiles', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+        // Add more tables if needed
     }
 
     /**

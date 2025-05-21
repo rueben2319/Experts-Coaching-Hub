@@ -10,29 +10,22 @@ import { Package, Plus } from 'lucide-react';
 const sidebarNavItems: NavItem[] = [
     {
         title: 'All Packages',
-        href: '/packages',
+        href: '/coach/packages',
         icon: Package,
     },
     {
         title: 'Package Content',
-        href: '/packages/content',
+        href: '/coach/packages/content',
         icon: Package,
     },
     {
         title: 'Package Settings',
-        href: '/packages/settings',
+        href: '/coach/packages/settings',
         icon: Package,
     },
 ];
 
 export default function PackageLayout({ children }: PropsWithChildren) {
-    // When server-side rendering, we only render the layout on the client...
-    if (typeof window === 'undefined') {
-        return null;
-    }
-
-    const currentPath = window.location.pathname;
-
     return (
         <div className="px-4 py-6">
             <Heading title="Packages" description="Manage your packages and their content" />
@@ -47,7 +40,7 @@ export default function PackageLayout({ children }: PropsWithChildren) {
                                 variant="ghost"
                                 asChild
                                 className={cn('w-full justify-start', {
-                                    'bg-muted': currentPath === item.href,
+                                    'bg-muted': window.location.pathname === item.href,
                                 })}
                             >
                                 <Link href={item.href || '#'} prefetch>
@@ -62,7 +55,7 @@ export default function PackageLayout({ children }: PropsWithChildren) {
                             asChild
                             className="w-full justify-start"
                         >
-                            <Link href={route('packages.create')} prefetch>
+                            <Link href={route('coach.packages.create')} prefetch>
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Package
                             </Link>
